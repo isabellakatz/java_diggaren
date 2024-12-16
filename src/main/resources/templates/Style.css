@@ -1,0 +1,104 @@
+/* Allmän stil */
+body {
+    margin: 10px;
+    font-family: Arial, sans-serif;
+}
+
+/* Wrapper för header och meny */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #1db954;
+    color: black;
+    padding: 10px 20px;
+}
+
+/* Header-stil */
+header h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Mellanrum mellan bilder och X */
+    font-size: 60px;
+    font-weight: bolder;
+    margin: 0;
+}
+
+header h1 img {
+    height: 50px;
+}
+
+header h2 {
+    margin: 10px;
+    font-size: 16px;
+    font-weight: normal;
+    color: black;
+}
+
+/* Navigationsmeny-stil */
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav ul li a {
+    display: block;
+    padding: 10px 15px;
+    color: black;
+    text-decoration: none;
+}
+
+nav ul li {
+    position: relative; /* Gör det möjligt att positionera .dropdown-content i förhållande till <li> */
+}
+
+nav ul li a:hover {
+    background-color: #18a148;
+}
+
+#radioBilder img {
+    height: 250px;
+    margin: 55px;
+}
+
+#radioBilder p{
+    font-size: 20px;
+    color: black;
+    text-align: center;
+    font-weight: bold;
+}
+
+#omOss {
+    margin: 55px;
+    font-size: 20px;
+    color: black;
+    text-align: left;
+    line-height: 1.5;
+    font-weight: normal;
+}
+
+/* Dropdown-meny */
+.dropdown-content {
+    display: none; /* Gömmer dropdown som standard */
+    position: absolute;
+    top: 100%; /* Placerar dropdown direkt under radiokanaler */
+    left: 0;
+    background-color: #444;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    padding: 15px 52px;
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #18a148;
+}
+
+nav ul li:hover .dropdown-content {
+    display: block;
+}
