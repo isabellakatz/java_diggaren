@@ -56,9 +56,9 @@ document.getElementById("play-button").addEventListener("click", function() {
 
 
 // När man klickar på knappen
-document.getElementById("play-button-p2").addEventListener("click", function() {
+document.getElementById("play-button").addEventListener("click", function() {
     const audioPlayer = document.getElementById("P2-player");
-    const playButton = document.getElementById("play-button-p2");
+    const playButton = document.getElementById("play-button");
 
 
     // Dölj knappen när den klickas

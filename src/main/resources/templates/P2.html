@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>SR X SPOTIFY</title>
-    <link rel="stylesheet" href="../static/css/Style.css">
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="/css/Style.css">
+    <script src="/js/P2.js"></script>
 
 </head>
 <body>
 <div class="header-container">
     <header>
         <h1>
-            <img src="../static/images/SR_logo.png" alt="SR logo">
+            <img src="/images/SR_logo.png" alt="SR logo">
             X
-            <img src="../static/images/spotify_logo.png" alt="spotify logo">
+            <img src="/images/spotify_logo.png" alt="spotify logo">
         </h1>
         <h2>Här kan du lyssna på Sveriges Radio och hitta låtarna enkelt via Spotify!</h2>
     </header>
@@ -22,10 +22,10 @@
             <li>
                 <a href="RadioKanaler.html">Radiokanaler</a>
                 <div class="dropdown-content">
-                    <a href="P1.html">P1</a>
-                    <a href="P2.html">P2</a>
-                    <a href="P3.html">P3</a>
-                    <a href="P4.html">P4</a>
+                    <a href="/P1.html">P1</a>
+                    <a href="/P2.html">P2</a>
+                    <a href="/P3.html">P3</a>
+                    <a href="/P4.html">P4</a>
                 </div>
             </li>
             <li><a href="OmOss.html">Om oss</a></li>
@@ -35,8 +35,14 @@
 <main>
     <section id="radioBilder">
         <p>
-            <img src="../static/images/P2img.jpg">
+            <img src="/images/P2img.jpg">
         </p>
     </section></main>
+
+<div class="container">
+    <button id="play-button">Hämta och Spela P3</button>
+    <audio id="P3-player" controls style="display: none;"></audio>
+    <button id="playlist-button">Spellista</button>
+</div>
 </body>
 </html>
