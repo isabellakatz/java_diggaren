@@ -102,3 +102,19 @@ nav ul li a:hover {
 nav ul li:hover .dropdown-content {
     display: block;
 }
+
+#play-button {
+    background-color: #1db954; /* Grön bakgrundsfärg */
+    color: white; /* Vit textfärg */
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none; /* Ta bort standardram */
+    border-radius: 6px; /* Rundade hörn */
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
