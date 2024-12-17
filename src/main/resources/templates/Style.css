@@ -35,7 +35,6 @@ header h2 {
     color: black;
 }
 
-/* Navigationsmeny-stil */
 nav ul {
     list-style: none;
     display: flex;
@@ -49,7 +48,7 @@ nav ul li a {
 }
 
 nav ul li {
-    position: relative; /* Gör det möjligt att positionera .dropdown-content i förhållande till <li> */
+    position: relative;
 }
 
 nav ul li a:hover {
@@ -133,15 +132,30 @@ nav ul li:hover .dropdown-content {
 
 .playlistContainer {
     margin-top: 20px;
+    background-color: #1db954;
+    color: white;
+    width: 500px;
+    height: 100%; /* Eller ange en specifik höjd om det behövs */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Centrerar vertikalt */
+}
+
+.playlist {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .playlist ul {
     list-style-type: none;
     padding: 0;
+    align-items: center;
+    text-align: center; /* Centrerar texten */
 }
 
 .playlist li {
     margin: 5px 0;
     font-size: 16px;
-    color: #333;
 }

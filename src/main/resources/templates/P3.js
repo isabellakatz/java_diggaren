@@ -88,17 +88,31 @@ async function fetchPlaylist() {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(textResponse, "application/xml");
 
-        // Hämta spellistan från XML-dokumentet
+        // Hämta den senaste låten
+        const previousSong = xmlDoc.getElementsByTagName("previoussong")[0];
+        const previousSongTitle = previousSong ? previousSong.getElementsByTagName("title")[0].textContent : "Ingen tidigare låt";
+        const previousSongArtist = previousSong ? previousSong.getElementsByTagName("artist")[0].textContent : "";
+
+        // Hämta den nuvarande låten
+        const currentSong = xmlDoc.getElementsByTagName("song")[0];
+        const currentSongTitle = currentSong ? currentSong.getElementsByTagName("title")[0].textContent : "Ingen aktuell låt";
+        const currentSongArtist = currentSong ? currentSong.getElementsByTagName("artist")[0].textContent : "";
+
+        // Uppdatera UI för den senaste och nuvarande låten
+        const previousSongContainer = document.querySelector(".previous-song");
+        const currentSongContainer = document.querySelector(".current-song");
+
+        previousSongContainer.textContent = `Tidigare spelad: ${previousSongTitle} - ${previousSongArtist}`;
+        currentSongContainer.textContent = `Nu spelas: ${currentSongTitle} - ${currentSongArtist}`;
+
+        // Hämta spellistan om du vill visa hela spellistan också
         const songs = xmlDoc.getElementsByTagName("song");
         const playlistContainer = document.querySelector(".playlist");
 
-        // Töm container för att visa ny spellista
         playlistContainer.innerHTML = '';
 
         if (songs.length > 0) {
-            // Skapa en lista av låtar
             const ul = document.createElement("ul");
-
             Array.from(songs).forEach(song => {
                 const title = song.getElementsByTagName("title")[0].textContent;
                 const artist = song.getElementsByTagName("artist")[0].textContent;
@@ -107,15 +121,10 @@ async function fetchPlaylist() {
                 li.textContent = `${title} - ${artist}`;
                 ul.appendChild(li);
             });
-
-            // Lägg till listan till container
             playlistContainer.appendChild(ul);
-        } else {
-            playlistContainer.textContent = "Ingen låtlista hittades eller spellistan är tom.";
         }
 
     } catch (error) {
         console.error('Fel vid hämtning av spellista:', error);
-        alert('Det uppstod ett problem vid hämtning av spellistan.');
     }
 }
