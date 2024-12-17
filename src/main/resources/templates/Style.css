@@ -132,9 +132,6 @@ nav ul li:hover .dropdown-content {
 
 .playlistContainer {
     margin-top: 20px;
-    background-color: #1db954;
-    color: white;
-    width: 500px;
     height: 100%; /* Eller ange en specifik höjd om det behövs */
     display: flex;
     flex-direction: column;
