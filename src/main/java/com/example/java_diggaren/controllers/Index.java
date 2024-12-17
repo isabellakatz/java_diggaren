@@ -7,6 +7,6 @@ public class Index {
 
     @GetMapping
     public String index() {
-        return "index";
+        return "RadioKanaler";
     }
 }

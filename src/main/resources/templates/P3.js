@@ -8,7 +8,7 @@ const spelLista = document.getElementById("playlist-button");
 // När man klickar på knappen
 playButton.addEventListener("click", () => {
     fetch(apiUrl) // Anropar Sveriges Radio API
-        .then(response => response.json()) // Omvandlar svaret till JSON, eftersom svaret är i XML
+        .then(response => response.json()) // Omvandlar svaret till JSON
         .then(data => {
             // Filtrera fram P3 (kanal-ID 164)
             const p3Channel = data.channels.find(channel => channel.id === 164);
