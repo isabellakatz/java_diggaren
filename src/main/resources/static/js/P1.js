@@ -3,6 +3,8 @@
 const apiUrl = "https://api.sr.se/api/v2/channels?format=json";
 const audioElement = document.getElementById("P1-player");
 const playButton = document.getElementById("play-button");
+const spelLista = document.getElementById("playlist-button");
+
 
 // När man klickar på knappen
 playButton.addEventListener("click", () => {
@@ -29,41 +31,64 @@ playButton.addEventListener("click", () => {
         });
 });
 
-// När man klickar på knappen
-document.getElementById("play-button").addEventListener("click", function() {
-    const audioPlayer = document.getElementById("P1-player");
 
-    // Visa ljudspelaren när knappen trycks
-    audioPlayer.style.display = "block"; // Gör ljudspelaren synlig
+spelLista.addEventListener("click", () => {
+    fetchPlaylist();
+})
 
-    // Sätt källan till Sveriges Radio P1-ljudström
-    const P1StreamURL = "https://audio.sr.se/sida/streaming/132.mp3"; // Direkt MP3-länk
-    audioPlayer.src = P1StreamURL;
+async function fetchPlaylist() {
+    try {
+        // Hämta spellista från API:et
+        const response = await fetch("https://api.sr.se/api/v2/playlists/rightnow?channelid=163");
 
-    // Försök att spela upp ljudet
-    audioPlayer.play().catch(error => {
-        console.error("Autoplay blockerades av webbläsaren:", error);
-    });
-});
+        if (!response.ok) {
+            throw new Error("HTTP-status: " + response.status);
+        }
 
-// När man klickar på knappen
-document.getElementById("play-button").addEventListener("click", function() {
-    const audioPlayer = document.getElementById("P1-player");
-    const playButton = document.getElementById("play-button");
+        // Läsa svaret som text (XML)
+        const textResponse = await response.text();
 
-    // Dölj knappen när den klickas
-    playButton.style.display = "none";
+        // Konvertera XML till JavaScript-objekt
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(textResponse, "application/xml");
 
-    // Visa ljudspelaren när knappen trycks
-    audioPlayer.style.display = "block"; // Gör ljudspelaren synlig
+        // Hämta den senaste låten
+        const previousSong = xmlDoc.getElementsByTagName("previoussong")[0];
+        const previousSongTitle = previousSong ? previousSong.getElementsByTagName("title")[0].textContent : "";
+        const previousSongArtist = previousSong ? previousSong.getElementsByTagName("artist")[0].textContent : "";
 
-    // Sätt källan till Sveriges Radio P1-ljudström
-    const P1StreamURL = "https://audio.sr.se/sida/streaming/132.mp3"; // Direkt MP3-länk
-    audioPlayer.src = P1StreamURL;
+        // Hämta den nuvarande låten
+        const currentSong = xmlDoc.getElementsByTagName("song")[0];
+        const currentSongTitle = currentSong ? currentSong.getElementsByTagName("title")[0].textContent : "";
+        const currentSongArtist = currentSong ? currentSong.getElementsByTagName("artist")[0].textContent : "";
 
-    // Försök att spela upp ljudet
-    audioPlayer.play().catch(error => {
-        console.error("Autoplay blockerades av webbläsaren:", error);
-    });
-});
+        // Uppdatera UI för den senaste och nuvarande låten
+        const previousSongContainer = document.querySelector(".previous-song");
+        const currentSongContainer = document.querySelector(".current-song");
 
+        previousSongContainer.textContent = `Tidigare spelad: ${previousSongTitle} - ${previousSongArtist}`;
+        currentSongContainer.textContent = `Nu spelas: ${currentSongTitle} - ${currentSongArtist}`;
+
+        // Hämta spellistan om du vill visa hela spellistan också
+        const songs = xmlDoc.getElementsByTagName("song");
+        const playlistContainer = document.querySelector(".playlist");
+
+        playlistContainer.innerHTML = '';
+
+        if (songs.length > 0) {
+            const ul = document.createElement("ul");
+            Array.from(songs).forEach(song => {
+                const title = song.getElementsByTagName("title")[0].textContent;
+                const artist = song.getElementsByTagName("artist")[0].textContent;
+
+                const li = document.createElement("li");
+                li.textContent = `${title} - ${artist}`;
+                ul.appendChild(li);
+            });
+            playlistContainer.appendChild(ul);
+        }
+
+    } catch (error) {
+        console.error('Fel vid hämtning av spellista:', error);
+    }
+}
