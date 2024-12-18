@@ -1,25 +1,21 @@
 //function
-
-
 const apiUrl = "https://api.sr.se/api/v2/channels?format=json";
 const audioElement = document.getElementById("P2-player");
 const playButton = document.getElementById("play-button");
-
+const spelLista = document.getElementById("playlist-button");
 
 // När man klickar på knappen för P2
 playButton.addEventListener("click", () => {
     fetch(apiUrl) // Anropar Sveriges Radio API
         .then(response => response.json()) // Omvandlar svaret till JSON, eftersom svaret är i XML
         .then(data => {
-            // Filtrera fram P1 (kanal-ID 163)
+            // Filtrera fram P2 (kanal-ID 163)
             const p2Channel = data.channels.find(channel => channel.id === 163);
 
-
             if (p2Channel && p2Channel.liveaudio.url) {
-                // Hämta URL till P2-ljudströmmen
+                // Hämta URL till P4-ljudströmmen
                 const streamUrl = p2Channel.liveaudio.url;
                 console.log("P2-ström URL:", streamUrl);
-
 
                 // Spela upp ljudströmmen
                 audioElement.src = streamUrl;
@@ -33,49 +29,63 @@ playButton.addEventListener("click", () => {
         });
 });
 
+spelLista.addEventListener("click", () => {
+    fetchPlaylist();
+})
 
-// När man klickar på knappen
-document.getElementById("play-button").addEventListener("click", function() {
-    const audioPlayer = document.getElementById("P2-player");
+async function fetchPlaylist() {
+    try {
+        // Hämta spellista från API:et
+        const response = await fetch("https://api.sr.se/api/v2/playlists/rightnow?channelid=163");
 
+        if (!response.ok) {
+            throw new Error("HTTP-status: " + response.status);
+        }
 
-    // Visa ljudspelaren när knappen trycks
-    audioPlayer.style.display = "block"; // Gör ljudspelaren synlig
+        // Läsa svaret som text (XML)
+        const textResponse = await response.text();
 
+        // Konvertera XML till JavaScript-objekt
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(textResponse, "application/xml");
 
-    // Sätt källan till Sveriges Radio P1-ljudström
-    const P2StreamURL = "https://audio.sr.se/sida/streaming/163.mp3"; // Direkt MP3-länk
-    audioPlayer.src = P2StreamURL;
+        // Hämta den senaste låten
+        const previousSong = xmlDoc.getElementsByTagName("previoussong")[0];
+        const previousSongTitle = previousSong ? previousSong.getElementsByTagName("title")[0].textContent : "";
+        const previousSongArtist = previousSong ? previousSong.getElementsByTagName("artist")[0].textContent : "";
 
+        // Hämta den nuvarande låten
+        const currentSong = xmlDoc.getElementsByTagName("song")[0];
+        const currentSongTitle = currentSong ? currentSong.getElementsByTagName("title")[0].textContent : "";
+        const currentSongArtist = currentSong ? currentSong.getElementsByTagName("artist")[0].textContent : "";
 
-    // Försök att spela upp ljudet
-    audioPlayer.play().catch(error => {
-        console.error("Autoplay blockerades av webbläsaren:", error);
-    });
-});
+        // Uppdatera UI för den senaste och nuvarande låten
+        const previousSongContainer = document.querySelector(".previous-song");
+        const currentSongContainer = document.querySelector(".current-song");
 
+        previousSongContainer.textContent = `Tidigare spelad: ${previousSongTitle} - ${previousSongArtist}`;
+        currentSongContainer.textContent = `Nu spelas: ${currentSongTitle} - ${currentSongArtist}`;
 
-// När man klickar på knappen
-document.getElementById("play-button").addEventListener("click", function() {
-    const audioPlayer = document.getElementById("P2-player");
-    const playButton = document.getElementById("play-button");
+        // Hämta spellistan om du vill visa hela spellistan också
+        const songs = xmlDoc.getElementsByTagName("song");
+        const playlistContainer = document.querySelector(".playlist");
 
+        playlistContainer.innerHTML = '';
 
-    // Dölj knappen när den klickas
-    playButton.style.display = "none";
+        if (songs.length > 0) {
+            const ul = document.createElement("ul");
+            Array.from(songs).forEach(song => {
+                const title = song.getElementsByTagName("title")[0].textContent;
+                const artist = song.getElementsByTagName("artist")[0].textContent;
 
+                const li = document.createElement("li");
+                li.textContent = `${title} - ${artist}`;
+                ul.appendChild(li);
+            });
+            playlistContainer.appendChild(ul);
+        }
 
-    // Visa ljudspelaren när knappen trycks
-    audioPlayer.style.display = "block"; // Gör ljudspelaren synlig
-
-
-    // Sätt källan till Sveriges Radio P1-ljudström
-    const P2StreamURL = "https://audio.sr.se/sida/streaming/163.mp3"; // Direkt MP3-länk
-    audioPlayer.src = P2StreamURL;
-
-
-    // Försök att spela upp ljudet
-    audioPlayer.play().catch(error => {
-        console.error("Autoplay blockerades av webbläsaren:", error);
-    });
-});
+    } catch (error) {
+        console.error('Fel vid hämtning av spellista:', error);
+    }
+}

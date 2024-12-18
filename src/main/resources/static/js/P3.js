@@ -30,43 +30,6 @@ playButton.addEventListener("click", () => {
         });
 });
 
-// När man klickar på knappen
-document.getElementById("play-button").addEventListener("click", function() {
-    const audioPlayer = document.getElementById("P3-player");
-
-    // Visa ljudspelaren när knappen trycks
-    audioPlayer.style.display = "block"; // Gör ljudspelaren synlig
-
-    // Sätt källan till Sveriges Radio P1-ljudström
-    const P3StreamURL = "https://sverigesradio.se/topsy/direkt/srapi/164.mp3"; // Direkt MP3-länk
-    audioPlayer.src = P3StreamURL;
-
-    // Försök att spela upp ljudet
-    audioPlayer.play().catch(error => {
-        console.error("Autoplay blockerades av webbläsaren:", error);
-    });
-});
-
-// När man klickar på knappen
-document.getElementById("play-button").addEventListener("click", function() {
-    const audioPlayer = document.getElementById("P3-player");
-    const playButton = document.getElementById("play-button");
-
-    // Dölj knappen när den klickas
-    playButton.style.display = "none";
-
-    // Visa ljudspelaren när knappen trycks
-    audioPlayer.style.display = "block"; // Gör ljudspelaren synlig
-
-    // Sätt källan till Sveriges Radio P1-ljudström
-    const P3StreamURL = "https://sverigesradio.se/topsy/direkt/srapi/164.mp3"; // Direkt MP3-länk
-    audioPlayer.src = P3StreamURL;
-
-    // Försök att spela upp ljudet
-    audioPlayer.play().catch(error => {
-        console.error("Autoplay blockerades av webbläsaren:", error);
-    });
-});
 
 spelLista.addEventListener("click", () => {
     fetchPlaylist();
@@ -90,12 +53,12 @@ async function fetchPlaylist() {
 
         // Hämta den senaste låten
         const previousSong = xmlDoc.getElementsByTagName("previoussong")[0];
-        const previousSongTitle = previousSong ? previousSong.getElementsByTagName("title")[0].textContent : "Ingen tidigare låt";
+        const previousSongTitle = previousSong ? previousSong.getElementsByTagName("title")[0].textContent : "";
         const previousSongArtist = previousSong ? previousSong.getElementsByTagName("artist")[0].textContent : "";
 
         // Hämta den nuvarande låten
         const currentSong = xmlDoc.getElementsByTagName("song")[0];
-        const currentSongTitle = currentSong ? currentSong.getElementsByTagName("title")[0].textContent : "Ingen aktuell låt";
+        const currentSongTitle = currentSong ? currentSong.getElementsByTagName("title")[0].textContent : "";
         const currentSongArtist = currentSong ? currentSong.getElementsByTagName("artist")[0].textContent : "";
 
         // Uppdatera UI för den senaste och nuvarande låten
