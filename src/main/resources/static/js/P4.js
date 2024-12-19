@@ -1,36 +1,18 @@
 
 
-const apiUrl = "https://api.sr.se/api/v2/channels?format=json";
+const apiUrl = "https://sverigesradio.se/topsy/direkt/srapi/207.mp3";
 const audioElement = document.getElementById("P4-player");
 const playButton = document.getElementById("play-button");
 const spelLista = document.getElementById("playlist-button");
 
-
-// När man klickar på knappen
-playButton.addEventListener("click", () => {
-    fetch(apiUrl) // Anropar Sveriges Radio API
-        .then(response => response.json()) // Omvandlar svaret till JSON, eftersom svaret är i XML
-        .then(data => {
-            // Filtrera fram P4-malmö (kanal-ID 297)
-            const p4Channel = data.channels.find(channel => channel.id === 207);
-
-            if (p4Channel && p4Channel.liveaudio.url) {
-                // Hämta URL till P4-ljudströmmen
-                const streamUrl = p4Channel.liveaudio.url;
-                console.log("P4-ström URL:", streamUrl);
-
-                // Spela upp ljudströmmen
-                audioElement.src = streamUrl;
-                audioElement.play();
-            } else {
-                console.error("Kunde inte hitta ljudströmmen för P4.");
-            }
-        })
-        .catch(error => {
-            console.error("Fel vid API-anrop:", error);
-        });
+document.getElementById("play-button").addEventListener("click", function() {
+    audioElement.src = apiUrl;
+    playButton.style.display = "none";
+    audioElement.style.display = "block";
+    audioElement.play()
+        .then(() => console.log("Spelar ljudströmmen"))
+        .catch(error => console.error("Fel vid uppspelning:", error));
 });
-
 
 spelLista.addEventListener("click", () => {
     fetchPlaylist();

@@ -1,37 +1,19 @@
 //function
 
-const apiUrl = "https://api.sr.se/api/v2/channels?format=json";
+const apiUrl = "https://sverigesradio.se/topsy/direkt/srapi/132.mp3";
 const audioElement = document.getElementById("P1-player");
 const playButton = document.getElementById("play-button");
 const spelLista = document.getElementById("playlist-button");
 
 
-// När man klickar på knappen
-playButton.addEventListener("click", () => {
-    fetch(apiUrl) // Anropar Sveriges Radio API
-        .then(response => response.json()) // Omvandlar svaret till JSON, eftersom svaret är i XML
-        .then(data => {
-            // Filtrera fram P1 (kanal-ID 132)
-            const p1Channel = data.channels.find(channel => channel.id === 132);
-
-            if (p1Channel && p1Channel.liveaudio.url) {
-                // Hämta URL till P1-ljudströmmen
-                const streamUrl = p1Channel.liveaudio.url;
-                console.log("P1-ström URL:", streamUrl);
-
-                // Spela upp ljudströmmen
-                audioElement.src = streamUrl;
-                audioElement.play();
-            } else {
-                console.error("Kunde inte hitta ljudströmmen för P1.");
-            }
-        })
-        .catch(error => {
-            console.error("Fel vid API-anrop:", error);
-        });
+document.getElementById("play-button").addEventListener("click", function() {
+    audioElement.src = apiUrl;
+    playButton.style.display = "none";
+    audioElement.style.display = "block";
+    audioElement.play()
+        .then(() => console.log("Spelar ljudströmmen"))
+        .catch(error => console.error("Fel vid uppspelning:", error));
 });
-
-
 spelLista.addEventListener("click", () => {
     fetchPlaylist();
 })
@@ -39,7 +21,7 @@ spelLista.addEventListener("click", () => {
 async function fetchPlaylist() {
     try {
         // Hämta spellista från API:et
-        const response = await fetch("https://api.sr.se/api/v2/playlists/rightnow?channelid=163");
+        const response = await fetch("https://api.sr.se/api/v2/playlists/rightnow?channelid=132");
 
         if (!response.ok) {
             throw new Error("HTTP-status: " + response.status);
