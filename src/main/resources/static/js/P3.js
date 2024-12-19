@@ -1,33 +1,17 @@
 
 
-const apiUrl = "https://api.sr.se/api/v2/channels?format=json";
+const apiUrl = "https://sverigesradio.se/topsy/direkt/srapi/164.mp3";
 const audioElement = document.getElementById("P3-player");
 const playButton = document.getElementById("play-button");
 const spelLista = document.getElementById("playlist-button");
 
-// När man klickar på knappen
-playButton.addEventListener("click", () => {
-    fetch(apiUrl) // Anropar Sveriges Radio API
-        .then(response => response.json()) // Omvandlar svaret till JSON
-        .then(data => {
-            // Filtrera fram P3 (kanal-ID 164)
-            const p3Channel = data.channels.find(channel => channel.id === 164);
-
-            if (p3Channel && p3Channel.liveaudio.url) {
-                // Hämta URL till P3-ljudströmmen
-                const streamUrl = p3Channel.liveaudio.url;
-                console.log("P3-ström URL:", streamUrl);
-
-                // Spela upp ljudströmmen
-                audioElement.src = streamUrl;
-                audioElement.play();
-            } else {
-                console.error("Kunde inte hitta ljudströmmen för P3.");
-            }
-        })
-        .catch(error => {
-            console.error("Fel vid API-anrop:", error);
-        });
+document.getElementById("play-button").addEventListener("click", function() {
+    audioElement.src = apiUrl;
+    playButton.style.display = "none";
+    audioElement.style.display = "block";
+    audioElement.play()
+        .then(() => console.log("Spelar ljudströmmen"))
+        .catch(error => console.error("Fel vid uppspelning:", error));
 });
 
 
