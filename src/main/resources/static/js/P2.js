@@ -1,5 +1,5 @@
 //function
-const apiUrl = "https://sverigesradio.se/topsy/direkt/srapi/163.mp";
+const apiUrl = "https://sverigesradio.se/topsy/direkt/srapi/163.mp3";
 const audioElement = document.getElementById("P2-player");
 const playButton = document.getElementById("play-button");
 const spelLista = document.getElementById("playlist-button");
