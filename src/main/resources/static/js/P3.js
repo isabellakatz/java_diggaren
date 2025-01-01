@@ -2,6 +2,7 @@ const apiUrl = "https://sverigesradio.se/topsy/direkt/srapi/164.mp3";
 const audioElement = document.getElementById("P3-player");
 const playButton = document.getElementById("play-button");
 const playQuiz = document.getElementById("play-quiz");
+const submitAnswer = document.getElementById("submit-answer");
 const clientId = "0dfbaadbec2b44ccbd420b22d5141ff3";
 const clientSecret = "5f9e7c3ce53246f591a42dbc2d648f4f";
 let currentSongTitle = "";
@@ -17,10 +18,13 @@ document.getElementById("play-button").addEventListener("click", function() {
 });
 
 document.getElementById("play-quiz").addEventListener("click", function() {
-    fetchPlaylist();
+   // setInterval(fetchCurrentSong, 5000); // hämtar current song var 5:e sekund
+    fetchCurrentSong();
+    playQuiz.style.display = "none";
+    submitAnswer.style.display = "block";
 });
 
-async function fetchPlaylist() {
+async function fetchCurrentSong() {
     try {
         // Hämta spellista från API:et
         const response = await fetch("https://api.sr.se/api/v2/playlists/rightnow?channelid=164");
@@ -41,10 +45,6 @@ async function fetchPlaylist() {
         currentSongTitle = currentSong ? currentSong.getElementsByTagName("title")[0].textContent : "";
         currentSongArtist = currentSong ? currentSong.getElementsByTagName("artist")[0].textContent : "";
 
-        // Uppdatera UI för den nuvarande låten (inte visad för användaren)
-        // const currentSongContainer = document.querySelector(".current-song");
-        // currentSongContainer.textContent = `Nu spelas: ${currentSongTitle} - ${currentSongArtist}`;
-
         // Starta quizet
         startQuiz();
 
@@ -53,6 +53,7 @@ async function fetchPlaylist() {
     }
 }
 
+// Hämta Spotify Token
 async function fetchSpotifyToken() {
     const tokenUrl = "https://accounts.spotify.com/api/token";
     const credentials = btoa(`${clientId}:${clientSecret}`);
@@ -69,6 +70,8 @@ async function fetchSpotifyToken() {
 
         if (!response.ok) {
             throw new Error("Kunde inte hämta Spotify-token.");
+        }else{
+            console.log("Du har access");
         }
 
         const data = await response.json();
@@ -80,37 +83,86 @@ async function fetchSpotifyToken() {
 
 async function fetchSpotifyRecommendations(currentSongTitle, currentSongArtist) {
     try {
-        const token = await fetchSpotifyToken();
-        if (!token) return;
+        console.log("Startar funktionen fetchSpotifyRecommendations...");
 
-        const searchUrl = `https://api.spotify.com/v1/search?q=track:${encodeURIComponent(currentSongTitle)}%20artist:${encodeURIComponent(currentSongArtist)}&type=track&limit=1`;
+        const token = await fetchSpotifyToken();
+        if (!token) {
+            console.error("Ingen token.");
+            return [];
+        }
+        console.log("Token:", token);
+
+        // Sök efter låtar från samma artist
+        const searchUrl = `https://api.spotify.com/v1/search?q=artist:${encodeURIComponent(currentSongArtist)}&type=track&limit=10`;
+        console.log("Skickar till Spotify:", searchUrl);
 
         const searchResponse = await fetch(searchUrl, {
             headers: { "Authorization": `Bearer ${token}` }
         });
 
-        const searchData = await searchResponse.json();
-        const trackId = searchData.tracks.items[0]?.id;
-
-        if (!trackId) {
-            console.error("Ingen låt hittades för rekommendationer.");
+        if (!searchResponse.ok) {
+            console.error("Fel vid hämtning av låtar:", searchResponse.status);
             return [];
         }
 
-        const recUrl = `https://api.spotify.com/v1/recommendations?seed_tracks=${trackId}&limit=3`;
-        const recResponse = await fetch(recUrl, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
+        const searchData = await searchResponse.json();
+        console.log("Data mottagen:", searchData);
 
-        const recData = await recResponse.json();
-        return recData.tracks.map(track => ({
+        // Hämta låtar från samma artist
+        const artistTracks = searchData.tracks.items.map(track => ({
             title: track.name,
-            artist: track.artists[0].name
+            artist: track.artists[0]?.name || "Okänd artist"
         }));
+        console.log("Låtar från samma artist:", artistTracks);
+
+        // Kontrollera om vi fick några resultat
+        if (artistTracks.length === 0) {
+            console.error("Inga låtar hittades.");
+            return [];
+        }
+
+        // Filtrera bort den aktuella låten
+        const filteredTracks = artistTracks.filter(track => track.title !== currentSongTitle);
+        console.log("Filtrerade låtar (utan aktuell låt):", filteredTracks);
+
+        // Ta bort dubbletter genom att skapa en unik lista baserat på både titel och artist
+        const uniqueTracks = [];
+        const trackTitles = new Set();
+
+        filteredTracks.forEach(track => {
+            const trackKey = `${track.title} - ${track.artist}`;
+            if (!trackTitles.has(trackKey)) {
+                trackTitles.add(trackKey);
+                uniqueTracks.push(track);
+            }
+        });
+        console.log("Unika låtar utan dubbletter:", uniqueTracks);
+
+        // Lägg till den aktuella låten som ett alternativ om den inte redan finns i listan
+        if (!uniqueTracks.some(track => track.title === currentSongTitle && track.artist === currentSongArtist)) {
+            uniqueTracks.push({ title: currentSongTitle, artist: currentSongArtist });
+        }
+        console.log("Alla alternativ (inklusive aktuell låt):", uniqueTracks);
+
+        // Begränsa till 4 alternativ och blanda dem
+        const limitedOptions = uniqueTracks.slice(0, 4);
+        console.log("Begränsade alternativ (max 4):", limitedOptions);
+
+        shuffleArray(limitedOptions);
+        console.log("Blandade alternativ:", limitedOptions);
+
+        // Filtrera bort tomma alternativ innan vi returnerar
+        const finalOptions = limitedOptions.filter(option => option.title && option.artist);
+        console.log("Slutliga alternativ efter filtrering:", finalOptions);
+
+        return finalOptions;
+
     } catch (error) {
-        console.error("Fel vid hämtning av rekommendationer:", error);
+        console.error("Fel vid hämtning av Spotify-låtar:", error);
+        return [];
     }
 }
+
 
 // Starta quiz
 async function startQuiz() {
@@ -160,6 +212,7 @@ document.getElementById("submit-answer").addEventListener("click", function() {
 
     if (!selectedOption) {
         feedbackContainer.textContent = "Välj ett alternativ innan du skickar in!";
+
         return;
     }
 

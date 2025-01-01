@@ -1,4 +1,4 @@
-/* Allmän stil */
+/* Allmänna stilen för hela sidan */
 body {
     margin: 10px;
     font-family: Arial, sans-serif;
@@ -57,7 +57,9 @@ nav ul li a:hover {
 
 #radioBilder img {
     height: 250px;
-    margin: 55px;
+   /*margin: 55px; */
+    margin-top: 55px;
+    margin-bottom: 0px;
 }
 
 #radioBilder p{
@@ -110,51 +112,13 @@ nav ul li:hover .dropdown-content {
     font-weight: bold;
     border: none; /* Ta bort standardram */
     border-radius: 6px; /* Rundade hörn */
-}
-
-#playlist-button{
-    margin-top: 50px;
-    padding: 12px 24px;
-    background-color: #1db954;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    border: none; /* Ta bort standardram */
-    border-radius: 6px; /* Rundade hörn */
-    display: flex;
+    position: relative;
 }
 
 .container{
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.playlistContainer {
-    margin-top: 20px;
-    height: 100%; /* Eller ange en specifik höjd om det behövs */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* Centrerar vertikalt */
-}
-
-.playlist {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.playlist ul {
-    list-style-type: none;
-    padding: 0;
-    align-items: center;
-    text-align: center; /* Centrerar texten */
-}
-
-.playlist li {
-    margin: 5px 0;
-    font-size: 16px;
 }
 
 /* Huvudlayout */
@@ -170,6 +134,46 @@ nav ul li:hover .dropdown-content {
     padding: 15px 30px;
     border-radius: 25px;
     font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#quiz-container {
+    max-width: 600px;
+    margin: 20px auto; /* Centrerar sektionen */
+    padding: 20px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Centrerar text och element */
+    font-family: Arial, sans-serif;
+}
+
+#quiz-options input[type="radio"] {
+    margin-right: 10px;
+}
+
+#quiz-question {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #555;
+}
+#quiz-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+}
+
+#play-quiz, #submit-answer {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #18a148;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
